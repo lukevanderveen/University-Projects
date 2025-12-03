@@ -1,0 +1,37 @@
+format: jb-book
+root: content/config.md
+
+parts:
+- caption: Inference with clouds-aware models
+  chapters:
+  - file: content/ml4ops/HOWTO_postprocess_inference.ipynb
+  - file: content/ml4ops/HOWTO_Run_Inference_multioutput_binary.ipynb
+  - file: content/ml4ops/HOWTO_inference_on_image_time_series.ipynb
+  - file: content/ml4ops/run_with_ml4floods.ipynb
+
+- caption: WorldFloods
+  chapters:
+  - file: content/worldfloods_dataset.md
+  - file: content/prep/exploring_worldfloods.ipynb
+
+- caption: Data prep
+  chapters:
+  - file: content/prep/full_data_ingest.ipynb
+  - file: content/prep/gt_masks_generation.ipynb
+  - file: content/labeling.md
+
+- caption: ML model development
+  chapters:
+  - file: content/ml_overview.md
+  - file: content/ml4ops/HOWTO_Train_models.ipynb
+  - file: content/ml4ops/HOWTO_performance_metrics_workflow.ipynb
+  - file: content/ml4ops/HOWTO_Run_Inference_on_new_data.ipynb
+
+- caption: Experimental
+  chapters:
+  - file: content/prep/demo_pytorch_transforms.ipynb
+  - file: content/ml4ops/HOWTO_Calculate_uncertainty_maps.ipynb
+
+- caption: Project rationale
+  chapters:
+  - file: content/intro/introduction.md
