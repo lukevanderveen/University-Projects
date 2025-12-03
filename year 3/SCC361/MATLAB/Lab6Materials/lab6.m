@@ -1,0 +1,1 @@
+decisiontree("IvyLeague.txt", 10, 3);

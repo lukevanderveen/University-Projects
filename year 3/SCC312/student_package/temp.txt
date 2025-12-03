@@ -1,0 +1,255 @@
+currently working syntax analyser class: 
+import java.io.IOException;
+
+public class SyntaxAnalyser extends AbstractSyntaxAnalyser{
+    public SyntaxAnalyser(String filename) throws IOException{
+        this.lex = new LexicalAnalyser(filename); // Initialize lexical analyser
+        // this.nextToken = lex.getNextToken(); // Fetch first token
+    }
+    
+    public void acceptTerminal(int symbol) throws IOException, CompilationException {
+        if (nextToken.symbol == symbol) {
+            myGenerate.insertTerminal(nextToken); // Log matched token
+            nextToken = lex.getNextToken(); // Move to the next token
+        } else {
+            String message = "Expected " + Token.getName(symbol) + " but found '" + nextToken.text + "'";
+            myGenerate.reportError(nextToken, message);
+            throw new CompilationException(message);
+        }
+    }
+
+    // Grammar rules section
+    /** Begin processing the first (top level) token.*/
+    public void _statementPart_() throws IOException, CompilationException{
+        myGenerate.commenceNonterminal("StatementPart");
+        myGenerate.insertTerminal(nextToken);
+        if (nextToken.symbol == Token.beginSymbol) {
+            nextToken = lex.getNextToken();
+            _statementList_();    
+            acceptTerminal(Token.endSymbol);   
+        } else {
+            myGenerate.reportError(nextToken, "Expected 'begin' at the start of StatementPart");
+            throw new CompilationException("Syntax error: Expected 'begin' at the start, found " + nextToken.text);
+        }
+        myGenerate.finishNonterminal("StatementPart");
+    }
+
+    private void _statementList_() throws IOException, CompilationException{
+        //acceptTerminal(Token.becomesSymbol);
+        myGenerate.commenceNonterminal("StatementList");
+        //myGenerate.insertTerminal(nextToken);
+        //
+        
+        _statement_();
+
+        while (nextToken.symbol == Token.semicolonSymbol) { // If ';' found, continue
+            acceptTerminal(Token.semicolonSymbol);
+            //System.out.println("statement list next token = "+ Token.getName(nextToken.symbol));
+            //nextToken = lex.getNextToken();
+            _statementList_();
+        }
+        myGenerate.finishNonterminal("StatementList");
+    }
+    
+    public void _statement_() throws IOException, CompilationException{
+        myGenerate.commenceNonterminal("Statement");
+
+        //System.out.println("statement next token = "+ Token.getName(nextToken.symbol));
+
+        switch (nextToken.symbol){
+            case Token.identifier:
+                _assignmentStatement_();
+                break;
+            case Token.ifSymbol:
+                _ifStatement_();
+                break;
+            case Token.whileSymbol:
+                _whileStatement_();
+                break;
+            case Token.callSymbol:
+                _procedureStatement_();
+                break;
+            case Token.doSymbol:
+                _untilStatement_();
+                break;
+            case Token.forSymbol:
+                _forStatement_();
+                break;
+            default:
+                myGenerate.reportError(nextToken, "Unexpected token in Statement");
+                throw new CompilationException("Syntax error at line " + nextToken.lineNumber);
+        }
+        
+        myGenerate.finishNonterminal("Statement");
+    }
+      
+    private void _assignmentStatement_() throws IOException, CompilationException{
+        myGenerate.commenceNonterminal("AssignmentStatement");
+        //System.out.println("statement next token = "+ Token.getName(nextToken.symbol));
+        //nextToken = lex.getNextToken();
+
+        acceptTerminal(Token.identifier);
+        acceptTerminal(Token.becomesSymbol);
+
+        if (nextToken.symbol == Token.identifier || nextToken.symbol == Token.numberConstant) {
+            _expression_();
+        } else if (nextToken.symbol == Token.stringConstant) {
+            acceptTerminal(Token.stringConstant);
+        } else {
+            myGenerate.reportError(nextToken, "Expected expression or string constant.");
+            throw new CompilationException("Syntax error in <AssignmentStatement> at line " + nextToken.lineNumber);
+        }
+
+        myGenerate.finishNonterminal("AssignmentStatement");
+    }
+    
+    private void _ifStatement_() throws IOException, CompilationException{
+        myGenerate.commenceNonterminal("IfStatement");
+        acceptTerminal(Token.ifSymbol);
+        _condition_();
+        acceptTerminal(Token.thenSymbol);
+        _statementList_();
+
+        if (nextToken.symbol == Token.elseSymbol) {
+            acceptTerminal(Token.elseSymbol);
+            _statementList_();
+        }
+
+        acceptTerminal(Token.endSymbol);
+        acceptTerminal(Token.ifSymbol);
+        myGenerate.finishNonterminal("IfStatement");
+    }
+
+    private void _whileStatement_() throws IOException, CompilationException{
+        myGenerate.commenceNonterminal("WhileStatement");
+        acceptTerminal(Token.whileSymbol);
+        _condition_();
+        acceptTerminal(Token.loopSymbol);
+        _statementList_();
+        acceptTerminal(Token.endSymbol);
+        acceptTerminal(Token.loopSymbol);
+        myGenerate.finishNonterminal("WhileStatement");
+    }
+    private void _procedureStatement_() throws IOException, CompilationException{
+        myGenerate.commenceNonterminal("ProcedureStatement");
+        acceptTerminal(Token.callSymbol);
+        acceptTerminal(Token.identifier);
+        acceptTerminal(Token.leftParenthesis);
+        _argumentList_();
+        acceptTerminal(Token.rightParenthesis);
+        myGenerate.finishNonterminal("ProcedureStatement");
+
+    }
+
+    private void _untilStatement_() throws IOException, CompilationException{
+        myGenerate.commenceNonterminal("UntilStatement");
+        acceptTerminal(Token.doSymbol);
+        _statementList_();
+        acceptTerminal(Token.untilSymbol);
+        _condition_();
+        myGenerate.finishNonterminal("UntilStatement");
+
+    }
+    private void _forStatement_() throws IOException, CompilationException{
+        myGenerate.commenceNonterminal("ForStatement");
+        acceptTerminal(Token.forSymbol);
+        acceptTerminal(Token.leftParenthesis);
+        _assignmentStatement_();
+        acceptTerminal(Token.semicolonSymbol);
+        _condition_();
+        acceptTerminal(Token.semicolonSymbol);
+        _assignmentStatement_();
+        acceptTerminal(Token.rightParenthesis);
+        acceptTerminal(Token.doSymbol);
+        _statementList_();
+        acceptTerminal(Token.endSymbol);
+        acceptTerminal(Token.loopSymbol);
+        myGenerate.finishNonterminal("ForStatement");
+
+    }
+
+    private void _argumentList_() throws IOException, CompilationException{
+        myGenerate.commenceNonterminal("ArgumentList");
+        acceptTerminal(Token.identifier);
+
+        while (nextToken.symbol == Token.commaSymbol) { // If ';' found, continue
+            acceptTerminal(Token.commaSymbol);
+            _argumentList_();
+            acceptTerminal(Token.identifier);
+        }
+        myGenerate.finishNonterminal("ArgumentList");
+    }
+
+    private void _condition_() throws IOException, CompilationException{
+        myGenerate.commenceNonterminal("Condition");
+
+        acceptTerminal(Token.identifier); // First operand
+        _conditionalOperator_(); // Accept conditional operator
+    
+        // Accept second operand (identifier, number, or string constant)
+        if (nextToken.symbol == Token.identifier || nextToken.symbol == Token.numberConstant || nextToken.symbol == Token.stringConstant) {
+            acceptTerminal(nextToken.symbol);
+        } else {
+            myGenerate.reportError(nextToken, "Expected identifier, number, or string constant after conditional operator.");
+            throw new CompilationException("Syntax error in Condition at line " + nextToken.lineNumber);
+        }
+    
+        myGenerate.finishNonterminal("Condition");
+    }
+
+    private void _conditionalOperator_() throws IOException, CompilationException {
+        if (nextToken.symbol == Token.greaterThanSymbol || nextToken.symbol == Token.greaterEqualSymbol ||
+            nextToken.symbol == Token.equalSymbol || nextToken.symbol == Token.notEqualSymbol ||
+            nextToken.symbol == Token.lessThanSymbol || nextToken.symbol == Token.lessEqualSymbol) {
+            acceptTerminal(nextToken.symbol);
+        } else {
+            myGenerate.reportError(nextToken, "Expected a conditional operator (>, >=, ==, !=, <, <=).");
+            throw new CompilationException("Syntax error in <ConditionalOperator> at line " + nextToken.lineNumber);
+        }
+    }
+
+    private void _expression_() throws IOException, CompilationException{
+        myGenerate.commenceNonterminal("Expression");
+
+        _term_(); // Parse first term
+
+        while (nextToken.symbol == Token.plusSymbol || nextToken.symbol == Token.minusSymbol) { // Handle `+` or `-`
+            acceptTerminal(nextToken.symbol);
+            _term_();
+        }
+
+        myGenerate.finishNonterminal("Expression");
+    }
+
+    private void _term_() throws IOException, CompilationException{
+        myGenerate.commenceNonterminal("Term");
+
+        _factor_(); // Parse first factor
+
+        while (nextToken.symbol == Token.timesSymbol || nextToken.symbol == Token.divideSymbol || nextToken.symbol == Token.modSymbol) { // Handle `*`, `/`, `%`
+            acceptTerminal(nextToken.symbol);
+            _factor_();
+        }
+
+        myGenerate.finishNonterminal("Term");
+    }
+
+    private void _factor_() throws IOException, CompilationException{
+        myGenerate.commenceNonterminal("Factor");
+
+        if (nextToken.symbol == Token.identifier) {
+            acceptTerminal(Token.identifier);
+        } else if (nextToken.symbol == Token.numberConstant) {
+            acceptTerminal(Token.numberConstant);
+        } else if (nextToken.symbol == Token.leftParenthesis) {
+            acceptTerminal(Token.leftParenthesis);
+            _expression_();
+            acceptTerminal(Token.rightParenthesis);
+        } else {
+            myGenerate.reportError(nextToken, "Unexpected token in Factor");
+            throw new CompilationException("Syntax error in Factor at line " + nextToken.lineNumber);
+        }
+
+        myGenerate.finishNonterminal("Factor");
+    }
+}

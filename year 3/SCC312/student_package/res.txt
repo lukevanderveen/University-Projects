@@ -1,0 +1,21 @@
+Compilation Exception
+	Caused by Syntax Error in program 'Programs Folder\program2' at line 1: Expected EOF but found 'begim' (IDENTIFIER)
+
+Compilation Exception
+	Caused by Syntax Error in program 'Programs Folder\program4' at line 7: Expected EOF but found 'end' (end)
+
+Compilation Exception
+	Caused by Syntax Error in program 'Programs Folder\program5' at line 7: Expected EOF but found ';' (;)
+
+Compilation Exception
+	Caused by Syntax Error in program 'Programs Folder\program7' at line 4: Expected EOF but found 'else' (else)
+
+Compilation Exception
+	Caused by Syntax Error in program 'Programs Folder\program8' at line 12: Expected EOF but found 'call' (call)
+
+Compilation Exception
+	Caused by Syntax Error in program 'Programs Folder\program9' at line 4: Expected EOF but found ')' ())
+
+Compilation Exception
+	Caused by Syntax Error in program 'Programs Folder\program10' at line 0: Expected EOF but found ')' ())
+

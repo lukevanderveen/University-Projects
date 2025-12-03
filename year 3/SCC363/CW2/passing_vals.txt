@@ -1,0 +1,72 @@
+test 1
+0.6
+0.4583333333333333
+0.5607384811168918
+
+
+def Task2(num, table, probs):
+    # TODO
+    # extract x and y values 
+    X = np.array([2, 3, 4, 5])
+    Y = np.array([6, 7, 8])
+    
+    # convert table into numpy array for indexing
+    np_table = np.array(table)
+    
+    # 1) compute probabilities 1 and 2
+    # p1 = (3 <= X <= 4)
+    # p2 = P(X + Y <= 10)
+    mask_x = (X >= 3) & (X <= 4)
+    valid_xy_mask = (X[None, :] + Y[:, None]) <= 10
+    prob1 = np.sum(np_table[:, mask_x]) / num
+    prob2 = np.sum(np_table * valid_xy_mask) / num
+    
+    
+    # 2) compute P(Y=8 | T)
+    # initalise probabilities givin by spec
+    # compute P(T) using the law of total probability
+        # sum over x values
+        # sum over y values
+    PX2, PX3, PX4, PX5, PY6, PY7 = probs
+    
+    total_Y8_cases = np.sum(np_table[2, :])  # Sum over all X values in row Y=8
+    P_Y8 = total_Y8_cases / num
+    
+    if np.sum(np_table[2, :]) == 0:
+        P_T_given_Y8 = 0  # Avoid division by zero
+    else:
+        P_X_given_Y8 = np_table[2, :] / total_Y8_cases  # Normalize cases for Y=8
+        P_T_given_Y8 = np.sum(P_X_given_Y8 * np.array([PX2, PX3, PX4, PX5]))  # Weighted sum
+   
+    P_T = (
+        np.sum(np_table[0, :] * np.array([PX2, PX3, PX4, PX5])) * PY6 +  # Cases for Y=6
+        np.sum(np_table[1, :] * np.array([PX2, PX3, PX4, PX5])) * PY7 +  # Cases for Y=7
+        np.sum(np_table[2, :] * np.array([PX2, PX3, PX4, PX5]))          # Cases for Y=8
+    ) / num
+    
+    # compute P(Y = 8 | T) using bayes' theorem
+    #P_T_given_Y8 = P_T_given_Y8 = np.sum(np_table[2, :] * np.array([PX2, PX3, PX4, PX5])) / np.sum(np_table[2, :])
+    #P_Y8 = np.sum(np_table[2, :]) / num
+    #prob3 = (P_T_given_Y8 * P_Y8) / P_T
+    
+    
+    # Compute P(Y=8 | T) using Bayes' Theorem
+    if P_T == 0:
+        prob3 = 0  # Avoid division by zero
+    else:
+        prob3 = (P_T_given_Y8 * P_Y8) / P_T
+    
+    return (prob1, prob2, prob3)
+
+test 2
+unkown
+
+test 3
+0.55
+0.5
+0.47410358565737054
+
+current 3 
+0.45
+0.575
+0.6350482315112539
