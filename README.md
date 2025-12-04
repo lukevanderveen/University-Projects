@@ -7,7 +7,7 @@ This repo holds the majority of my university courseworks and labs for my module
 
 ## Year 2
 - [201: Databases](year%202/201/)
-- [205: Social, Ethical and Proffessional Issues In Computing](year%202/205/)
+- [205: Computer Networks](year%202/205/)
 - [211: Operating Systems](year%202/211/)
 - [212: Advanced Programming](year%202/212/)
 
