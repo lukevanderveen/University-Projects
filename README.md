@@ -12,7 +12,7 @@ This repo holds the majority of my university courseworks and labs for my module
 - 212: Advanced Programming
 
 ## Year 3
-- 311: Distrubuted Systems
+- [311: Distributed Systems](year%203/SCC311/)
 - 312: Languages and Compilation
 - 360: Computer Science Seminars
 - 361: Artifical Intelligence
