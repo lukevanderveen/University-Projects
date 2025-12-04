@@ -13,11 +13,11 @@ This module had projects that looked into AI topics such as Decision trees, Bag 
 - Knapsack Problem
 - Genetic Algorithm
 
-  ## CW1
-  - A MATLAB image classification task
-  -  methodology and results can be seen in the [SCC361-CW1-Report.pdf](/SCC361-CW1/SCC361-CW1-Report.pdf)
+## CW1
+- A MATLAB image classification task
+-  methodology and results can be seen in the [SCC361-CW1-Report.pdf](/SCC361-CW1/SCC361-CW1-Report.pdf)
 
-  ## CW2
-  - a MATLAB genetic algorithm task
-  - a route must be drawn from 1 corner to the other that weaves through the randomly generated objects
-  - this project required hyperparameter tunning and implementing distance metrics to create the best path
+## CW2
+- a MATLAB genetic algorithm task
+- a route must be drawn from 1 corner to the other that weaves through the randomly generated objects
+- this project required hyperparameter tunning and implementing distance metrics to create the best path
