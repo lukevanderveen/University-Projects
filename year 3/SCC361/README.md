@@ -15,7 +15,7 @@ This module had projects that looked into AI topics such as Decision trees, Bag 
 
 ## CW1
 - A MATLAB image classification task
--  methodology and results can be seen in the [SCC361-CW1-Report.pdf](/SCC361-CW1/SCC361-CW1-Report.pdf)
+-  methodology and results can be seen in the [SCC361-CW1-Report.pdf](SCC361-CW1/SCC361-CW1-Report.pdf)
 
 ## CW2
 - a MATLAB genetic algorithm task
